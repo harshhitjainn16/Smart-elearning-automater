@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart E-Learning Automator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 400px;
+      min-height: 500px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 0;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .header h1 {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .section {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .section h2 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .control-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #333;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      margin: 10px 0;
+    }
+
+    .speed-display {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 10px;
+    }
+
+    .btn-primary {
+      background: white;
+      color: #667eea;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-danger {
+      background: #ff4757;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #ee5a6f;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+
+    .status {
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .status.active {
+      background: rgba(76, 209, 55, 0.3);
+      border: 1px solid rgba(76, 209, 55, 0.5);
+    }
+
+    .status.idle {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: white;
+      transition: width 0.3s;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 11px;
+      opacity: 0.8;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .summary-item {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+
+    .summary-item h4 {
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .summary-text {
+      opacity: 0.9;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .summary-meta {
+      opacity: 0.7;
+      font-size: 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .summary-badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+    }
+
+    .takeaways {
+      margin-top: 8px;
+      padding-left: 15px;
+    }
+
+    .takeaways li {
+      opacity: 0.9;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    /* Note-Taking Styles */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      padding: 20px;
+      width: 90%;
+      max-width: 350px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .modal-header h3 {
+      font-size: 16px;
+      color: white;
+    }
+
+    .modal-close {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      font-size: 20px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+
+    .modal-close:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .modal-body {
+      margin-bottom: 15px;
+    }
+
+    .modal-body label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .modal-body textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(0,0,0,0.3);
+      color: white;
+      font-family: inherit;
+      font-size: 13px;
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .modal-body input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(0,0,0,0.3);
+      color: white;
+      font-family: inherit;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .note-item {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      position: relative;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .note-item:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(2px);
+    }
+
+    .note-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .note-timestamp {
+      background: rgba(255, 100, 100, 0.3);
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .note-timestamp:hover {
+      background: rgba(255, 100, 100, 0.5);
+    }
+
+    .note-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .note-action-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: background 0.3s;
+    }
+
+    .note-action-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .note-text {
+      opacity: 0.95;
+      line-height: 1.5;
+      margin-bottom: 8px;
+      word-wrap: break-word;
+    }
+
+    .note-meta {
+      opacity: 0.7;
+      font-size: 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .note-video-title {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-bottom: 6px;
+      font-style: italic;
+    }
+
+    .note-tags {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .note-tag {
+      background: rgba(100, 200, 255, 0.3);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+    }
+
+    .notes-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎓 Smart E-Learning</h1>
+    <p>Automate Your Learning Journey</p>
+  </div>
+
+  <div class="container">
+    <!-- Status Section -->
+    <div class="status idle" id="status">
+      ⏸️ Automation Idle
+    </div>
+
+    <!-- Current Video Progress -->
+    <div class="section hidden" id="progressSection">
+      <h2>📹 Current Video</h2>
+      <div id="currentVideo">No video playing</div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+      <div id="videoTime">0:00 / 0:00</div>
+    </div>
+
+    <!-- Controls Section -->
+    <div class="section">
+      <h2>⚙️ Automation Settings</h2>
+      
+      <div class="control-group">
+        <label>Playback Speed</label>
+        <input type="range" id="speedSlider" min="0.5" max="2" step="0.25" value="1">
+        <div class="speed-display"><span id="speedValue">1.0</span>x</div>
+      </div>
+
+      <div class="control-group">
+        <label>Video Limit (0 = unlimited)</label>
+        <input type="number" id="videoLimit" min="0" max="1000" value="0" placeholder="0">
+      </div>
+
+      <div class="checkbox-group">
+        <input type="checkbox" id="autoSkipAds" checked>
+        <label for="autoSkipAds">Auto-skip ads</label>
+      </div>
+
+      <div class="checkbox-group">
+        <input type="checkbox" id="autoNext" checked>
+        <label for="autoNext">Auto-play next video</label>
+      </div>
+
+      <div class="checkbox-group">
+        <input type="checkbox" id="trackProgress" checked>
+        <label for="trackProgress">Track progress</label>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="section">
+      <button class="btn-primary" id="startBtn">▶️ Start Automation</button>
+      <button class="btn-danger hidden" id="stopBtn">⏹️ Stop Automation</button>
+      <button class="btn-secondary" id="statsBtn">📊 View Statistics</button>
+      <button class="btn-secondary" id="summaryBtn">📝 View Summaries</button>
+      <button class="btn-secondary" id="notesBtn">📓 Take Note (Ctrl+Shift+N)</button>
+    </div>
+
+    <!-- AI Summaries Section (Hidden by default) -->
+    <div class="section hidden" id="summariesSection">
+      <h2>📝 AI Video Summaries</h2>
+      <div id="summariesList">
+        <p style="text-align: center; opacity: 0.7;">No summaries yet. Complete a video to generate summary!</p>
+      </div>
+    </div>
+
+    <!-- Notes Section (Hidden by default) -->
+    <div class="section hidden" id="notesSection">
+      <h2>📓 My Notes</h2>
+      <div class="notes-controls">
+        <button class="btn-secondary" id="addNoteBtn">➕ Add Note</button>
+        <button class="btn-secondary" id="exportNotesBtn">📤 Export</button>
+        <input type="text" id="searchNotes" placeholder="🔍 Search notes..." style="margin-top: 8px; width: 100%; padding: 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white;">
+      </div>
+      <div id="notesList" style="margin-top: 12px;">
+        <p style="text-align: center; opacity: 0.7;">No notes yet. Click "Add Note" or press Ctrl+Shift+N while watching!</p>
+      </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="section">
+      <h2>📈 Your Progress</h2>
+      <div class="stats">
+        <div class="stat-box">
+          <div class="stat-value" id="videosWatched">0</div>
+          <div class="stat-label">Videos Watched</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="totalTime">0h</div>
+          <div class="stat-label">Total Time</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="avgSpeed">1.0x</div>
+          <div class="stat-label">Avg Speed</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="timeSaved">0h</div>
+          <div class="stat-label">Time Saved</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Made with ❤️ for smarter learning
+  </div>
+
+  <!-- Note Modal -->
+  <div id="noteModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>📝 Add Note</h3>
+        <button class="modal-close" id="closeNoteModal">×</button>
+      </div>
+      <div class="modal-body">
+        <label>Video Timestamp: <span id="noteTimestamp">00:00</span></label>
+        <textarea id="noteTextInput" placeholder="Enter your note here..." autofocus></textarea>
+        <input type="text" id="noteTagsInput" placeholder="Tags (comma-separated, optional)">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelNoteBtn">Cancel</button>
+        <button class="btn-primary" id="saveNoteBtn">💾 Save Note</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

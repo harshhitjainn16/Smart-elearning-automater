@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #111827;
+  color: #ffffff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+}
+
+p {
+  color: #9ca3af;
+}
+
+button {
+  transition: all 0.2s ease-in-out;
+}
+
+a {
+  color: #22d3ee;
+}
+
+a:hover {
+  color: #a5f3fc;
+}
