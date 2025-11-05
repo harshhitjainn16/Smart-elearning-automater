@@ -1,0 +1,20 @@
+{
+  "name": "smart-elearning-automater-monorepo",
+  "version": "1.0.0",
+  "description": "Smart E-Learning Automator - Frontend deployment configuration",
+  "private": true,
+  "workspaces": [
+    "smart-elearning-automator"
+  ],
+  "scripts": {
+    "build": "cd smart-elearning-automator && npm install && npm run build",
+    "dev": "cd smart-elearning-automator && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harshhitjainn16/Smart-elearning-automater"
+  },
+  "keywords": ["react", "automation", "e-learning"],
+  "author": "harshhitjainn16",
+  "license": "MIT"
+}

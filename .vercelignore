@@ -1,15 +1,18 @@
-# Backend files - should not be deployed to Vercel
+# Backend files - Python/Streamlit backend
 backend/
 *.py
+requirements.txt
+pyproject.toml
+Pipfile*
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
+.env
+.venv/
 env/
 venv/
-.env
-.venv
 pip-log.txt
 pip-delete-this-directory.txt
 .tox
@@ -20,30 +23,43 @@ nosetests.xml
 coverage.xml
 *.cover
 *.log
-.git
 .mypy_cache
 .pytest_cache
 .hypothesis
+.streamlit/
 
-# Large files
+# Extension files (Chrome extension)
+extension/
+
+# Data and model files
+data/
+models/
+*.sqlite
+*.db
+
+# Large media files
 *.mp4
 *.avi
 *.mov
 *.mkv
 *.webm
-*.sqlite
-*.db
 
-# Extension files (not needed for web deploy)
-extension/
-
-# Data files
-data/
-models/
-
-# Documentation (optional - remove if you want docs deployed)
+# Documentation files
 *.md
+BUG_FIXES.md
+COMPLETE_PROJECT_GUIDE.md
+DEPLOYMENT.md
+ENHANCEMENTS_SUMMARY.md
+INSTALLATION_GUIDE.md
+MULTI_DEVICE_FIX.md
+NEW_FEATURES_SUMMARY.md
+QUICKSTART.md
+README_NEW.md
+TEST_RESULTS.md
+THEME_FIX.md
+YOUTUBE_FIXES.md
 
-# Config files that might contain secrets
-config.py
+# Config and launch scripts
+LAUNCH_*.ps1
 .env.*
+LICENSE
