@@ -1,9 +1,13 @@
-# Backend files - Python/Streamlit backend
+# === FRONTEND-ONLY DEPLOYMENT CONFIG ===
+# Exclude ALL backend and non-React files from Vercel deployment
+
+# Python Backend (Streamlit Dashboard) - Deploy separately
 backend/
 *.py
 requirements.txt
 pyproject.toml
 Pipfile*
+Pipfile.lock
 __pycache__/
 *.pyc
 *.pyo
@@ -28,24 +32,30 @@ coverage.xml
 .hypothesis
 .streamlit/
 
-# Extension files (Chrome extension)
+# Chrome Extension - Manual installation only
 extension/
+manifest.json
 
-# Data and model files
+# Data and Models - Not needed for frontend
 data/
 models/
 *.sqlite
 *.db
+*.json
+!smart-elearning-automator/package*.json
 
-# Large media files
+# Large Media Files
 *.mp4
 *.avi
 *.mov
 *.mkv
 *.webm
+*.zip
+*.tar.gz
 
-# Documentation files
+# Documentation - Not needed for deployment
 *.md
+!smart-elearning-automator/README.md
 BUG_FIXES.md
 COMPLETE_PROJECT_GUIDE.md
 DEPLOYMENT.md
@@ -59,7 +69,24 @@ TEST_RESULTS.md
 THEME_FIX.md
 YOUTUBE_FIXES.md
 
-# Config and launch scripts
+# Scripts and Config Files
 LAUNCH_*.ps1
+*.ps1
 .env.*
 LICENSE
+
+# Development files
+.git/
+.gitignore
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Only deploy React app from smart-elearning-automator/ folder

@@ -1,20 +1,26 @@
 {
-  "name": "smart-elearning-automater-monorepo",
+  "name": "smart-elearning-automator-frontend",
   "version": "1.0.0",
-  "description": "Smart E-Learning Automator - Frontend deployment configuration",
+  "description": "Smart E-Learning Automator - Frontend Only for Vercel",
   "private": true,
   "workspaces": [
     "smart-elearning-automator"
   ],
   "scripts": {
     "build": "cd smart-elearning-automator && npm install && npm run build",
-    "dev": "cd smart-elearning-automator && npm start"
+    "start": "cd smart-elearning-automator && npm start",
+    "dev": "cd smart-elearning-automator && npm start",
+    "postinstall": "cd smart-elearning-automator && npm install"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/harshhitjainn16/Smart-elearning-automater"
   },
-  "keywords": ["react", "automation", "e-learning"],
+  "keywords": ["react", "frontend", "automation", "e-learning", "vercel"],
   "author": "harshhitjainn16",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
 }

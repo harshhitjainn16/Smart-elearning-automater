@@ -2,11 +2,12 @@
 
 ## 🚀 Fixed Vercel Deployment
 
-The previous error was caused by Vercel trying to deploy the Python backend (Streamlit dashboard) which generated 4GB+ of files and crashed. This has been fixed by:
+The previous error was caused by Vercel detecting Python files and trying to deploy the entire Streamlit backend (4GB+ files) which crashed with memory overflow. This has been fixed by:
 
-1. ✅ Created `vercel.json` to deploy only the React frontend
-2. ✅ Added `.vercelignore` to exclude backend files
-3. ✅ Configured proper build paths
+1. ✅ Created root `package.json` to override Python detection
+2. ✅ Updated `vercel.json` with proper React build configuration  
+3. ✅ Enhanced `.vercelignore` to exclude all Python/backend files
+4. ✅ Configured Vercel to deploy only the React frontend
 
 ## 📁 Project Structure (Post-Fix)
 
