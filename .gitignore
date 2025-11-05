@@ -6,6 +6,7 @@ __pycache__/
 .Python
 env/
 venv/
+.venv/
 ENV/
 build/
 dist/
@@ -19,9 +20,11 @@ dist/
 # Logs
 *.log
 logs/
+automation.log
 
 # Environment variables
 .env
+.env.*
 
 # IDE
 .vscode/
@@ -45,3 +48,16 @@ backend/models/*
 # Selenium
 chromedriver*
 geckodriver*
+
+# Streamlit
+.streamlit/
+
+# Test files
+test_*.py
+*_test.py
+verify_*.py
+diagnose_*.py
+
+# Temporary files
+temp*
+tmp*
