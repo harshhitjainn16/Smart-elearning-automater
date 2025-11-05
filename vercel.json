@@ -1,0 +1,13 @@
+{
+  "buildCommand": "cd smart-elearning-automator && npm run build",
+  "outputDirectory": "smart-elearning-automator/build",
+  "installCommand": "cd smart-elearning-automator && npm install",
+  "framework": null,
+  "functions": {},
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

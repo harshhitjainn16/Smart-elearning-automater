@@ -1,0 +1,49 @@
+# Backend files - should not be deployed to Vercel
+backend/
+*.py
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# Large files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.sqlite
+*.db
+
+# Extension files (not needed for web deploy)
+extension/
+
+# Data files
+data/
+models/
+
+# Documentation (optional - remove if you want docs deployed)
+*.md
+
+# Config files that might contain secrets
+config.py
+.env.*
