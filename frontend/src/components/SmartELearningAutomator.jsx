@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Play, Pause, SkipForward, Brain, CheckCircle, Activity, Settings, Book, Award, Clock, TrendingUp, Zap, Database, Globe } from 'lucide-react';
+import { Play, Pause, SkipForward, Brain, CheckCircle, Activity, Settings, Book, Award, Clock, TrendingUp, Zap, Database, Globe, Wifi, WifiOff } from 'lucide-react';
+import apiService from '../services/apiService';
 
 const SmartELearningAutomator = () => {
   const [isAutomating, setIsAutomating] = useState(false);
@@ -11,6 +12,17 @@ const SmartELearningAutomator = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [videoStatus, setVideoStatus] = useState('idle');
   const [aiAccuracy, setAiAccuracy] = useState(94.5);
+  const [isConnected, setIsConnected] = useState(false);
+  const [backendError, setBackendError] = useState(null);
+  const [config, setConfig] = useState({
+    platform: 'youtube',
+    playlist_url: '',
+    username: '',
+    password: '',
+    auto_quiz: true,
+    video_limit: 5,
+    playback_speed: 1.0
+  });
 
   const stats = [
     { icon: Book, label: 'Videos Completed', value: currentVideo - 1, color: 'from-purple-500 to-pink-500' },
@@ -24,47 +36,124 @@ const SmartELearningAutomator = () => {
     setLogs(prev => [{timestamp, message, type}, ...prev.slice(0, 9)]);
   }, []);
 
+  // Initialize API service and WebSocket
   useEffect(() => {
-    if (isAutomating) {
-      const interval = setInterval(() => {
-        setProgress(prev => {
-          if (prev >= 100) {
-            setCurrentVideo(v => v + 1);
-            setVideoStatus('completed');
-            const currentVid = currentVideo;
-            addLog(`Video ${currentVid} completed successfully`, 'success');
-            setTimeout(() => {
-              setVideoStatus('playing');
-              addLog(`Starting video ${currentVid + 1}`, 'info');
-            }, 1000);
-            return 0;
-          }
-          return prev + 2;
-        });
-      }, 100);
-      return () => clearInterval(interval);
-    }
-  }, [isAutomating, currentVideo, addLog]);
+    // Set up event listeners
+    apiService.on('connected', setIsConnected);
+    apiService.on('error', (error) => {
+      setBackendError(error.message || 'Connection error');
+      addLog('Backend connection error', 'error');
+    });
+    apiService.on('reconnectFailed', () => {
+      setBackendError('Unable to connect to backend');
+      addLog('Failed to connect to backend after multiple attempts', 'error');
+    });
 
-  const handleAutomate = () => {
-    if (!isAutomating) {
+    // Real-time updates
+    apiService.on('statusUpdate', (data) => {
+      setIsAutomating(data.is_running);
+      setCurrentVideo(data.current_video);
+      setProgress(data.progress);
+      setVideoStatus(data.video_status);
+      if (data.stats) {
+        setAiAccuracy(data.stats.quiz_accuracy || 94.5);
+      }
+    });
+
+    apiService.on('progressUpdate', (data) => {
+      setProgress(data.progress);
+      setCurrentVideo(data.current_video);
+      setVideoStatus(data.video_status);
+    });
+
+    apiService.on('videoCompleted', (data) => {
+      addLog(`Video ${data.video_number} completed successfully`, 'success');
+      setVideoStatus('completed');
+    });
+
+    apiService.on('quizCompleted', (data) => {
+      const message = `Quiz completed: ${data.correct ? 'Correct' : 'Needs review'} (${data.confidence.toFixed(1)}% confidence)`;
+      addLog(message, data.correct ? 'success' : 'warning');
+      setAiAccuracy(data.new_accuracy);
+      setTotalQuizzes(prev => prev + 1);
+      if (data.correct) setQuizScore(prev => prev + 1);
+    });
+
+    apiService.on('automationStarted', (data) => {
       setIsAutomating(true);
       setVideoStatus('playing');
-      addLog('Automation started - Initializing AI models', 'success');
-      setTimeout(() => addLog('Connected to learning platform', 'info'), 500);
-    } else {
+      addLog(`Automation started for ${data.platform}`, 'success');
+    });
+
+    apiService.on('automationStopped', () => {
       setIsAutomating(false);
-      setVideoStatus('paused');
-      addLog('Automation paused by user', 'warning');
+      setVideoStatus('stopped');
+      addLog('Automation stopped by user', 'warning');
+    });
+
+    apiService.on('automationCompleted', (data) => {
+      setIsAutomating(false);
+      setVideoStatus('completed');
+      addLog(`Automation completed! ${data.total_videos} videos processed`, 'success');
+    });
+
+    apiService.on('automationError', (data) => {
+      setIsAutomating(false);
+      setVideoStatus('error');
+      addLog(`Automation error: ${data.error}`, 'error');
+    });
+
+    // Check initial connection
+    apiService.healthCheck()
+      .then(() => {
+        setBackendError(null);
+        addLog('Connected to backend successfully', 'success');
+      })
+      .catch((error) => {
+        setBackendError(error.message);
+        addLog('Backend not available', 'error');
+      });
+
+    // Cleanup on unmount
+    return () => {
+      apiService.cleanup();
+    };
+  }, [addLog]);
+
+  // Real automation control (replaces simulation)
+  const handleAutomate = async () => {
+    if (!isAutomating) {
+      try {
+        if (!config.playlist_url) {
+          addLog('Please enter a playlist URL first', 'warning');
+          return;
+        }
+
+        addLog('Starting automation...', 'info');
+        await apiService.startAutomation(config);
+      } catch (error) {
+        addLog(`Failed to start automation: ${error.message}`, 'error');
+        setBackendError(error.message);
+      }
+    } else {
+      try {
+        addLog('Stopping automation...', 'info');
+        await apiService.stopAutomation();
+      } catch (error) {
+        addLog(`Failed to stop automation: ${error.message}`, 'error');
+      }
     }
   };
 
-  const handleQuizSimulation = () => {
-    setTotalQuizzes(prev => prev + 1);
-    const correct = Math.random() > 0.1;
-    if (correct) setQuizScore(prev => prev + 1);
-    addLog(`Quiz ${totalQuizzes + 1}: ${correct ? 'Correct answer submitted' : 'Needs review'}`, correct ? 'success' : 'warning');
-    setAiAccuracy((quizScore + (correct ? 1 : 0)) / (totalQuizzes + 1) * 100);
+
+
+  const handleQuizSimulation = async () => {
+    try {
+      addLog('Testing quiz AI...', 'info');
+      await apiService.simulateQuiz();
+    } catch (error) {
+      addLog(`Quiz simulation failed: ${error.message}`, 'error');
+    }
   };
 
   const DashboardView = () => (
@@ -159,17 +248,77 @@ const SmartELearningAutomator = () => {
         <div className="space-y-4">
           <div>
             <label className="text-slate-400 text-sm mb-2 block">Learning Platform</label>
-            <select className="w-full bg-slate-700 text-white rounded-lg px-4 py-3 border border-slate-600 focus:border-cyan-500 focus:outline-none">
-              <option>Coursera</option>
-              <option>Udemy</option>
-              <option>YouTube Playlists</option>
-              <option>Moodle</option>
-              <option>Custom Platform</option>
+            <select 
+              value={config.platform}
+              onChange={(e) => setConfig(prev => ({ ...prev, platform: e.target.value }))}
+              className="w-full bg-slate-700 text-white rounded-lg px-4 py-3 border border-slate-600 focus:border-cyan-500 focus:outline-none"
+            >
+              <option value="coursera">Coursera</option>
+              <option value="udemy">Udemy</option>
+              <option value="youtube">YouTube Playlists</option>
+              <option value="moodle">Moodle</option>
             </select>
           </div>
           <div>
             <label className="text-slate-400 text-sm mb-2 block">Playlist URL</label>
-            <input type="text" placeholder="https://example.com/playlist/123" className="w-full bg-slate-700 text-white rounded-lg px-4 py-3 border border-slate-600 focus:border-cyan-500 focus:outline-none" />
+            <input 
+              type="text" 
+              placeholder="https://example.com/playlist/123" 
+              value={config.playlist_url}
+              onChange={(e) => setConfig(prev => ({ ...prev, playlist_url: e.target.value }))}
+              className="w-full bg-slate-700 text-white rounded-lg px-4 py-3 border border-slate-600 focus:border-cyan-500 focus:outline-none" 
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-slate-400 text-sm mb-2 block">Username (optional)</label>
+              <input 
+                type="text" 
+                placeholder="your@email.com" 
+                value={config.username}
+                onChange={(e) => setConfig(prev => ({ ...prev, username: e.target.value }))}
+                className="w-full bg-slate-700 text-white rounded-lg px-4 py-3 border border-slate-600 focus:border-cyan-500 focus:outline-none" 
+              />
+            </div>
+            <div>
+              <label className="text-slate-400 text-sm mb-2 block">Password (optional)</label>
+              <input 
+                type="password" 
+                placeholder="••••••••" 
+                value={config.password}
+                onChange={(e) => setConfig(prev => ({ ...prev, password: e.target.value }))}
+                className="w-full bg-slate-700 text-white rounded-lg px-4 py-3 border border-slate-600 focus:border-cyan-500 focus:outline-none" 
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-slate-400 text-sm mb-2 block">Video Limit</label>
+              <input 
+                type="number" 
+                min="1"
+                max="50"
+                value={config.video_limit}
+                onChange={(e) => setConfig(prev => ({ ...prev, video_limit: parseInt(e.target.value) }))}
+                className="w-full bg-slate-700 text-white rounded-lg px-4 py-3 border border-slate-600 focus:border-cyan-500 focus:outline-none" 
+              />
+            </div>
+            <div>
+              <label className="text-slate-400 text-sm mb-2 block">Playback Speed</label>
+              <select 
+                value={config.playback_speed}
+                onChange={(e) => setConfig(prev => ({ ...prev, playback_speed: parseFloat(e.target.value) }))}
+                className="w-full bg-slate-700 text-white rounded-lg px-4 py-3 border border-slate-600 focus:border-cyan-500 focus:outline-none"
+              >
+                <option value={0.5}>0.5x</option>
+                <option value={0.75}>0.75x</option>
+                <option value={1.0}>1.0x (Normal)</option>
+                <option value={1.25}>1.25x</option>
+                <option value={1.5}>1.5x</option>
+                <option value={1.75}>1.75x</option>
+                <option value={2.0}>2.0x</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -203,11 +352,14 @@ const SmartELearningAutomator = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between p-4 bg-slate-700 rounded-lg">
             <div>
-              <div className="text-white font-semibold">Save Quiz Answers</div>
-              <div className="text-slate-400 text-sm">Store answers for future reference</div>
+              <div className="text-white font-semibold">Auto-solve Quizzes</div>
+              <div className="text-slate-400 text-sm">Automatically solve quizzes using AI</div>
             </div>
-            <div className="w-12 h-6 bg-cyan-500 rounded-full flex items-center px-1">
-              <div className="w-4 h-4 bg-white rounded-full ml-auto"></div>
+            <div 
+              className={`w-12 h-6 ${config.auto_quiz ? 'bg-cyan-500' : 'bg-slate-600'} rounded-full flex items-center px-1 cursor-pointer`}
+              onClick={() => setConfig(prev => ({ ...prev, auto_quiz: !prev.auto_quiz }))}
+            >
+              <div className={`w-4 h-4 bg-white rounded-full transition-all ${config.auto_quiz ? 'ml-auto' : ''}`}></div>
             </div>
           </div>
           <div className="flex items-center justify-between p-4 bg-slate-700 rounded-lg">
@@ -228,15 +380,25 @@ const SmartELearningAutomator = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <div className="flex items-center gap-4 mb-2">
-            <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded-2xl">
-              <Brain className="w-8 h-8 text-white" />
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-4">
+              <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded-2xl">
+                <Brain className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
+                  SMART E-LEARNING AUTOMATOR
+                </h1>
+                <p className="text-slate-400 mt-1">AI-Powered Learning Automation Platform</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-                SMART E-LEARNING AUTOMATOR
-              </h1>
-              <p className="text-slate-400 mt-1">AI-Powered Learning Automation Platform</p>
+            <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${
+              isConnected ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+            }`}>
+              {isConnected ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
+              <span className="font-semibold">
+                {isConnected ? 'Connected' : backendError || 'Disconnected'}
+              </span>
             </div>
           </div>
         </div>
