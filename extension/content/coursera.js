@@ -47,36 +47,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({ success: true });
   }
   
-  if (request.action === 'getCurrentTimestamp') {
-    const video = document.querySelector('video');
-    if (video) {
-      const timestamp = Math.floor(video.currentTime);
-      const videoTitle = document.querySelector('h1')?.textContent?.trim() ||
-                        document.title.split('|')[0]?.trim() ||
-                        'Coursera Video';
-      
-      sendResponse({ 
-        success: true, 
-        timestamp: timestamp,
-        formattedTime: formatTime(timestamp),
-        videoTitle: videoTitle,
-        videoUrl: window.location.href,
-        platform: 'coursera'
-      });
-    } else {
-      sendResponse({ success: false, error: 'No video found' });
-    }
-  }
-  
-  if (request.action === 'jumpToTimestamp') {
-    const video = document.querySelector('video');
-    if (video && request.timestamp !== undefined) {
-      video.currentTime = request.timestamp;
-      sendResponse({ success: true });
-    } else {
-      sendResponse({ success: false, error: 'Cannot jump to timestamp' });
-    }
-  }
+
   
   return true;
 });

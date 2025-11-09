@@ -256,199 +256,7 @@
       font-size: 12px;
     }
 
-    /* Note-Taking Styles */
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
 
-    .modal-content {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 12px;
-      padding: 20px;
-      width: 90%;
-      max-width: 350px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .modal-header h3 {
-      font-size: 16px;
-      color: white;
-    }
-
-    .modal-close {
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: white;
-      font-size: 20px;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.3s;
-    }
-
-    .modal-close:hover {
-      background: rgba(255,255,255,0.3);
-    }
-
-    .modal-body {
-      margin-bottom: 15px;
-    }
-
-    .modal-body label {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 12px;
-      opacity: 0.9;
-    }
-
-    .modal-body textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.3);
-      background: rgba(0,0,0,0.3);
-      color: white;
-      font-family: inherit;
-      font-size: 13px;
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    .modal-body input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.3);
-      background: rgba(0,0,0,0.3);
-      color: white;
-      font-family: inherit;
-      font-size: 13px;
-      margin-top: 8px;
-    }
-
-    .modal-footer {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-    }
-
-    .note-item {
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 10px;
-      font-size: 13px;
-      position: relative;
-      transition: transform 0.2s, background 0.2s;
-    }
-
-    .note-item:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateX(2px);
-    }
-
-    .note-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 8px;
-    }
-
-    .note-timestamp {
-      background: rgba(255, 100, 100, 0.3);
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .note-timestamp:hover {
-      background: rgba(255, 100, 100, 0.5);
-    }
-
-    .note-actions {
-      display: flex;
-      gap: 5px;
-    }
-
-    .note-action-btn {
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: white;
-      padding: 4px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 11px;
-      transition: background 0.3s;
-    }
-
-    .note-action-btn:hover {
-      background: rgba(255,255,255,0.3);
-    }
-
-    .note-text {
-      opacity: 0.95;
-      line-height: 1.5;
-      margin-bottom: 8px;
-      word-wrap: break-word;
-    }
-
-    .note-meta {
-      opacity: 0.7;
-      font-size: 11px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .note-video-title {
-      font-size: 12px;
-      opacity: 0.8;
-      margin-bottom: 6px;
-      font-style: italic;
-    }
-
-    .note-tags {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-      margin-top: 8px;
-    }
-
-    .note-tag {
-      background: rgba(100, 200, 255, 0.3);
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 10px;
-    }
-
-    .notes-controls {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
   </style>
 </head>
 <body>
@@ -510,7 +318,7 @@
       <button class="btn-danger hidden" id="stopBtn">⏹️ Stop Automation</button>
       <button class="btn-secondary" id="statsBtn">📊 View Statistics</button>
       <button class="btn-secondary" id="summaryBtn">📝 View Summaries</button>
-      <button class="btn-secondary" id="notesBtn">📓 Take Note (Ctrl+Shift+N)</button>
+
     </div>
 
     <!-- AI Summaries Section (Hidden by default) -->
@@ -521,18 +329,7 @@
       </div>
     </div>
 
-    <!-- Notes Section (Hidden by default) -->
-    <div class="section hidden" id="notesSection">
-      <h2>📓 My Notes</h2>
-      <div class="notes-controls">
-        <button class="btn-secondary" id="addNoteBtn">➕ Add Note</button>
-        <button class="btn-secondary" id="exportNotesBtn">📤 Export</button>
-        <input type="text" id="searchNotes" placeholder="🔍 Search notes..." style="margin-top: 8px; width: 100%; padding: 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white;">
-      </div>
-      <div id="notesList" style="margin-top: 12px;">
-        <p style="text-align: center; opacity: 0.7;">No notes yet. Click "Add Note" or press Ctrl+Shift+N while watching!</p>
-      </div>
-    </div>
+
 
     <!-- Statistics Section -->
     <div class="section">
@@ -562,24 +359,7 @@
     Made with ❤️ for smarter learning
   </div>
 
-  <!-- Note Modal -->
-  <div id="noteModal" class="modal hidden">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>📝 Add Note</h3>
-        <button class="modal-close" id="closeNoteModal">×</button>
-      </div>
-      <div class="modal-body">
-        <label>Video Timestamp: <span id="noteTimestamp">00:00</span></label>
-        <textarea id="noteTextInput" placeholder="Enter your note here..." autofocus></textarea>
-        <input type="text" id="noteTagsInput" placeholder="Tags (comma-separated, optional)">
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" id="cancelNoteBtn">Cancel</button>
-        <button class="btn-primary" id="saveNoteBtn">💾 Save Note</button>
-      </div>
-    </div>
-  </div>
+
 
   <script src="popup.js"></script>
 </body>

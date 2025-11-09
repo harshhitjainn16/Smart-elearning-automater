@@ -35,13 +35,6 @@
     "service_worker": "background.js"
   },
   "commands": {
-    "take-note": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+N",
-        "mac": "Command+Shift+N"
-      },
-      "description": "Take a note at current timestamp"
-    },
     "toggle-automation": {
       "suggested_key": {
         "default": "Ctrl+Shift+S",

@@ -758,13 +758,12 @@ def dashboard_page():
     st.markdown("---")
     
     # Tabs for different sections
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
         "📊 Dashboard", 
         "📚 Playlist Progress", 
         "📝 Quiz History",
         "📈 Analytics",
         "🤖 AI Summaries",
-        "📓 My Notes",
         "⚙️ Settings"
     ])
     
@@ -1222,117 +1221,6 @@ def dashboard_page():
             ''', unsafe_allow_html=True)
     
     with tab6:
-        st.markdown("### 📓 My Timestamped Notes")
-        
-        # Import note manager
-        from note_manager import NoteManager
-        note_manager = NoteManager()
-        
-        # Get all notes
-        all_notes = note_manager.get_notes()
-        
-        if all_notes:
-            # Note statistics
-            stats = note_manager.get_statistics()
-            
-            col1, col2, col3, col4 = st.columns(4)
-            with col1:
-                st.metric("Total Notes", stats['total_notes'])
-            with col2:
-                st.metric("Videos", stats['total_videos'])
-            with col3:
-                st.metric("Avg per Video", stats['average_notes_per_video'])
-            with col4:
-                st.metric("Total Tags", stats['total_tags'])
-            
-            st.markdown("---")
-            
-            # Search and filters
-            col_search, col_platform, col_tag = st.columns([2, 1, 1])
-            with col_search:
-                note_search = st.text_input("🔍 Search notes", placeholder="Search by content, title, or tags...")
-            with col_platform:
-                note_platforms = list(stats['platforms'].keys())
-                platform_note_filter = st.selectbox("Platform Filter", ["All"] + note_platforms)
-            with col_tag:
-                if stats['tags']:
-                    tag_filter = st.selectbox("Tag Filter", ["All"] + stats['tags'])
-                else:
-                    tag_filter = "All"
-            
-            # Apply filters
-            filtered_notes = all_notes
-            
-            if note_search:
-                filtered_notes = note_manager.search_notes(note_search)
-            
-            if platform_note_filter != "All":
-                filtered_notes = [n for n in filtered_notes if n.get('platform') == platform_note_filter]
-            
-            if tag_filter != "All":
-                filtered_notes = [n for n in filtered_notes if tag_filter in n.get('tags', [])]
-            
-            st.markdown(f"### 📝 Showing {len(filtered_notes)} notes")
-            
-            # Export button
-            if st.button("📤 Export All Notes to Markdown", use_container_width=True):
-                markdown_export = note_manager.export_notes(format='markdown')
-                st.download_button(
-                    label="⬇️ Download Notes.md",
-                    data=markdown_export,
-                    file_name=f"video_notes_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
-                    mime="text/markdown",
-                    use_container_width=True
-                )
-            
-            st.markdown("---")
-            
-            # Group notes by video
-            notes_by_video = {}
-            for note in filtered_notes[:50]:  # Show max 50 notes
-                video_url = note.get('video_url', 'Unknown')
-                if video_url not in notes_by_video:
-                    notes_by_video[video_url] = []
-                notes_by_video[video_url].append(note)
-            
-            # Display notes grouped by video
-            for video_url, video_notes in notes_by_video.items():
-                video_title = video_notes[0].get('video_title', 'Untitled Video')
-                platform = video_notes[0].get('platform', 'unknown')
-                
-                with st.expander(f"📹 {platform.upper()} - {video_title} ({len(video_notes)} notes)", expanded=False):
-                    for note in sorted(video_notes, key=lambda x: x.get('timestamp', 0)):
-                        col_time, col_content = st.columns([1, 4])
-                        
-                        with col_time:
-                            st.markdown(f"**⏱️ {note.get('formatted_time', '00:00')}**")
-                            if note.get('tags'):
-                                for tag in note['tags']:
-                                    st.markdown(f"`{tag}`")
-                        
-                        with col_content:
-                            st.markdown(f"{note.get('note_text', 'No content')}")
-                            created_date = datetime.fromisoformat(note['created_at']).strftime('%b %d, %Y %H:%M')
-                            st.caption(f"📅 {created_date}")
-                        
-                        st.markdown("---")
-        else:
-            st.markdown('''
-            <div class="info-box">
-                <h3>📝 No Notes Yet!</h3>
-                <p>Your timestamped notes will appear here after you take them in the Chrome extension.</p>
-                <p><strong>How to take notes:</strong></p>
-                <ol>
-                    <li>Install the Chrome extension</li>
-                    <li>While watching any video, press <strong>Ctrl+Shift+N</strong></li>
-                    <li>Enter your note and optional tags</li>
-                    <li>Click Save - note will sync here automatically!</li>
-                </ol>
-                <p><strong>💡 Pro Tip:</strong> Click timestamps in notes to jump to that exact moment in the video!</p>
-            </div>
-            ''', unsafe_allow_html=True)
-    
-    with tab7:
         st.markdown("### ⚙️ User Settings")
         
         with st.form("settings_form"):
@@ -1390,7 +1278,7 @@ def dashboard_page():
         st.markdown("---")
         st.markdown("### 🔄 Extension Data Sync")
         st.markdown("""
-        Sync your AI summaries and notes between the Chrome extension and dashboard.
+        Sync your AI summaries between the Chrome extension and dashboard.
         
         **Note:** Currently, data is stored separately in:
         - **Extension**: Chrome local storage
@@ -1403,18 +1291,12 @@ def dashboard_page():
         
         with col_sync1:
             st.markdown("#### 📥 Import from Extension")
-            st.markdown("Paste JSON data from Chrome extension to import summaries and notes.")
+            st.markdown("Paste JSON data from Chrome extension to import summaries.")
             
             summaries_json_text = st.text_area(
                 "Paste Summaries JSON (from chrome.storage)",
-                height=100,
+                height=150,
                 placeholder='{"https://youtube.com/...": {...}}'
-            )
-            
-            notes_json_text = st.text_area(
-                "Paste Notes JSON (from chrome.storage)",
-                height=100,
-                placeholder='{"https://youtube.com/...": [{...}]}'
             )
             
             if st.button("📥 Import Data", use_container_width=True):
@@ -1423,11 +1305,10 @@ def dashboard_page():
                     import json
                     
                     summaries_data = json.loads(summaries_json_text) if summaries_json_text.strip() else None
-                    notes_data = json.loads(notes_json_text) if notes_json_text.strip() else None
                     
-                    stats = import_from_extension_json(summaries_data, notes_data)
+                    stats = import_from_extension_json(summaries_data, None)
                     
-                    st.success(f"✅ Imported {stats['summaries']} summaries and {stats['notes']} notes!")
+                    st.success(f"✅ Imported {stats['summaries']} summaries!")
                     time.sleep(2)
                     st.rerun()
                 except json.JSONDecodeError:
@@ -1464,7 +1345,7 @@ def dashboard_page():
         st.markdown("---")
         st.markdown("""
         **💡 How to Sync:**
-        1. **From Extension to Dashboard**: Open Chrome DevTools (F12) → Console → Type `chrome.storage.local.get(['videoSummaries', 'videoNotes'], console.log)` → Copy JSON → Paste above
+        1. **From Extension to Dashboard**: Open Chrome DevTools (F12) → Console → Type `chrome.storage.local.get(['videoSummaries'], console.log)` → Copy JSON → Paste above
         2. **From Dashboard to Extension**: Click "Generate Export Package" → Copy JSON → Open extension popup → Paste in sync area
         """)
 

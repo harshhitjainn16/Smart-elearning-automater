@@ -23,33 +23,33 @@
 
 ---
 
-## Feature 2: 📓 Note-Taking with Timestamps (COMPLETED)
-**Status:** ✅ Active and Ready
+## Feature 2: 📓 Note-Taking with Timestamps (REMOVED)
+**Status:** ❌ Removed per user request
 
-### What It Does:
-- Take timestamped notes while watching videos
-- Click timestamps to jump back to that moment
-- Search and filter all notes
-- Tag notes for organization
-- Export to Markdown format
-- Keyboard shortcut: **Ctrl+Shift+N**
+### What It Was:
+- Previously allowed timestamped notes while watching videos
+- ~~Click timestamps to jump back to that moment~~
+- ~~Search and filter all notes~~
+- ~~Tag notes for organization~~
+- ~~Export to Markdown format~~
+- ~~Keyboard shortcut: Ctrl+Shift+N~~
 
-### Files Created:
-1. `backend/note_manager.py` (NEW - 400+ lines)
+### Files Removed:
+1. `backend/note_manager.py` (DELETED)
+2. `extension/NOTE_TAKING_GUIDE.md` (DELETED)
 
-### Files Modified:
-1. `extension/manifest.json` (Added commands for shortcuts)
-2. `extension/popup.html` (Added note modal + notes section + 180 lines CSS)
-3. `extension/popup.js` (Added ~240 lines note functionality)
-4. `extension/background.js` (Added ~150 lines note management)
-5. `extension/content/youtube.js` (Added getCurrentTimestamp + jumpToTimestamp)
-6. `extension/content/udemy.js` (Added getCurrentTimestamp + jumpToTimestamp)
-7. `extension/content/coursera.js` (Added getCurrentTimestamp + jumpToTimestamp)
-8. `extension/content/linkedin.js` (Added getCurrentTimestamp + jumpToTimestamp)
-9. `extension/content/skillshare.js` (Added getCurrentTimestamp + jumpToTimestamp)
-
-### Documentation:
-- `extension/NOTE_TAKING_GUIDE.md`
+### Files Modified (Note functionality removed):
+1. `extension/manifest.json` (Removed take-note command)
+2. `extension/popup.html` (Removed note UI elements and CSS)
+3. `extension/popup.js` (Removed note functionality)
+4. `extension/background.js` (Removed note management)
+5. `extension/content/youtube.js` (Removed timestamp functions)
+6. `extension/content/udemy.js` (Removed timestamp functions)
+7. `extension/content/coursera.js` (Removed timestamp functions)
+8. `extension/content/linkedin.js` (Removed timestamp functions)
+9. `extension/content/skillshare.js` (Removed timestamp functions)
+10. `backend/dashboard_v2.py` (Removed My Notes tab)
+11. `backend/extension_sync.py` (Removed note sync functionality)
 
 ---
 
